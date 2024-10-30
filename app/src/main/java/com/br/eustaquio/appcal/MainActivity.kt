@@ -8,9 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
 
     private lateinit var display: TextView
+    private var firstOperand: Double? = null
     private var operator: String? = null
-    private var firstOperand: String? = null
-    private var secondOperand: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,42 +55,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clearDisplay() {
-        display.text = ""
+        display.text = "0"
         firstOperand = null
-        secondOperand = null
         operator = null
     }
 
     private fun appendNumber(number: String) {
-        display.append(number)
+        // Se o display estiver zerado, substitui por um número
+        if (display.text == "0" || display.text.isEmpty()) {
+            display.text = number
+        } else {
+            display.append(number) // Adiciona o número ao final
+        }
     }
 
     private fun setOperator(op: String) {
+        // Salva o primeiro operando e o operador, e mostra no display
         if (firstOperand == null) {
-            firstOperand = display.text.toString()
+            firstOperand = display.text.toString().toDoubleOrNull()
             operator = op
-            display.append(op)
+            display.append(" $op ") // Adiciona o operador ao display
+        } else {
+            // Se já há um operador, só substitui pelo novo
+            operator = op
+            // Substitui o operador anterior
+            val currentText = display.text.toString().split(" ")
+            if (currentText.size == 3) { // Exemplo: "2 + 2"
+                display.text = "${currentText[0]} $op ${currentText[2]}"
+            }
         }
     }
 
     private fun calculateResult() {
-        if (firstOperand != null) {
-            secondOperand = display.text.toString().substringAfter(operator!!)
-            val result = when (operator) {
-                "+" -> firstOperand!!.toDouble() + secondOperand!!.toDouble()
-                "-" -> firstOperand!!.toDouble() - secondOperand!!.toDouble()
-                "*" -> firstOperand!!.toDouble() * secondOperand!!.toDouble()
-                "/" -> if (secondOperand!!.toDouble() != 0.0) {
-                    firstOperand!!.toDouble() / secondOperand!!.toDouble()
-                } else {
-                    display.text = "Erro: Divisão por Zero"
-                    return
+        val currentText = display.text.toString().split(" ")
+        if (currentText.size == 3) {
+            val secondOperand = currentText[2].toDoubleOrNull()
+            if (firstOperand != null && secondOperand != null) {
+                val result = when (operator) {
+                    "+" -> firstOperand!! + secondOperand
+                    "-" -> firstOperand!! - secondOperand
+                    "*" -> firstOperand!! * secondOperand
+                    "/" -> if (secondOperand != 0.0) {
+                        firstOperand!! / secondOperand
+                    } else {
+                        display.text = "Erro: Divisão por Zero"
+                        return
+                    }
+                    else -> null
                 }
-                else -> null
+                display.text = result.toString() // Mostra o resultado no display
+                firstOperand = result // Permite continuar com o resultado
+                operator = null
             }
-            display.text = result.toString()
-            firstOperand = result.toString()
-            operator = null
         }
     }
 }
