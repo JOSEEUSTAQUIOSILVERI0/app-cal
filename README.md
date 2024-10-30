@@ -50,3 +50,4 @@ Este é um aplicativo de calculadora para Android desenvolvido em Kotlin. Ele pe
    ```bash
    git clone https://github.com/seu-usuario/calculadora-android.git
 
+![Captura de tela 2024-10-29 223237](https://github.com/user-attachments/assets/212fb632-ac7b-408a-9218-b9902da21b92)
