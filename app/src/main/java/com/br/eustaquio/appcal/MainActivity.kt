@@ -103,7 +103,12 @@ class MainActivity : AppCompatActivity() {
                     }
                     else -> null
                 }
-                display.text = result.toString() // Mostra o resultado no display
+                display.text = if (result != null && result == result.toInt().toDouble()) {
+                    result.toInt().toString() // Exibe como inteiro se não houver casas decimais
+                } else {
+                    result.toString()
+                }
+
                 firstOperand = result // Permite continuar com o resultado
                 operator = null
             }
